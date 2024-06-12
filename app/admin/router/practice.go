@@ -21,5 +21,7 @@ func registerPracticeRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddl
 		r.GET("/get_questions", actions.PermissionAction(), api.GetQuestions)
 		r.POST("question_submit", actions.PermissionAction(), api.QuestionSubmit)
 		r.GET("/get_test", actions.PermissionAction(), api.GetTest)
+		r.POST("/login_verify", actions.PermissionAction(), api.LoginVerify)
+		r.POST("/register", actions.PermissionAction(), api.Register)
 	}
 }

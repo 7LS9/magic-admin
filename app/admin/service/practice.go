@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -245,4 +246,33 @@ func (p *Practice) GetTest(ctx context.Context, req *dto.GetTestReq) (rsp *dto.G
 		return nil, errors.Wrap(err, "search test err")
 	}
 	return tl, err
+}
+
+func (p *Practice) LoginVerify(ctx context.Context, req *dto.LoginVerifyReq) (rsp *dto.LoginVerifyRsp, err error) {
+	newUser := &dto.Users{}
+	err = p.Orm.Table("new_users").Where("user_id = ?", req.UserID).Find(&newUser).Error
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot find user")
+	}
+	h := md5.New()
+	re := h.Sum([]byte(req.Psw))
+	if newUser.UserID == req.UserID && newUser.Username == req.Username && newUser.Psw == string(re) {
+		fmt.Println("登陆成功")
+	}
+	return rsp, err
+}
+
+func (p *Practice) Register(ctx context.Context, req *dto.RegisterReq) (rsp *dto.RegisterRsp, err error) {
+	h := md5.New()
+	re := h.Sum([]byte(req.Psw))
+	nu := &dto.Users{
+		UserID:   req.UserID,
+		Username: req.Username,
+		Psw:      string(re),
+	}
+	err = p.Orm.Table("new_users").Create(&nu).Error
+	if err != nil {
+		return nil, errors.Wrap(err, "Create err")
+	}
+	return rsp, err
 }

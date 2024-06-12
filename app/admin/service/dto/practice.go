@@ -1,6 +1,8 @@
 package dto
 
-import "time"
+import (
+	"time"
+)
 
 type CPPPractice struct {
 	ID         int64     `json:"id" gorm:"column:id"`
@@ -19,6 +21,13 @@ type Questions struct {
 	CorrectOption int64  `json:"correct_option"`
 	Tag           string `json:"tag"`
 	Score         int64  `json:"score"`
+}
+
+type Users struct {
+	ID       int64  `json:"id" `
+	UserID   int64  `json:"user_id"`
+	Username string `json:"username"`
+	Psw      string `json:"psw"`
 }
 
 func (cp *CPPPractice) TableName() string {
@@ -99,4 +108,24 @@ type GetTestRsp struct {
 	BaseRsp
 	Title string `json:"title"`
 	Pids  string `json:"pids"`
+}
+
+type LoginVerifyReq struct {
+	UserID   int64  `json:"user_id"`
+	Username string `form:"user_name" json:"user_name"`
+	Psw      string `json:"psw"`
+}
+
+type LoginVerifyRsp struct {
+	BaseRsp
+}
+
+type RegisterReq struct {
+	UserID   int64  `json:"user_id"`
+	Username string `form:"user_name" json:"user_name"`
+	Psw      string `json:"psw"`
+}
+
+type RegisterRsp struct {
+	BaseRsp
 }

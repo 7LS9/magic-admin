@@ -170,3 +170,46 @@ func (p Practice) GetTest(ctx *gin.Context) {
 	}
 	p.OK(rsp, "success")
 }
+
+func (p Practice) LoginVerify(ctx *gin.Context) {
+	svc := service.Practice{}
+	req := &dto.LoginVerifyReq{}
+	if err := p.MakeContext(ctx).MakeOrm().Bind(req).MakeService(&svc.Service).Errors; err != nil {
+		p.Logger.Error(err)
+		p.Error(http.StatusInternalServerError, err, err.Error())
+		return
+	}
+	if len(user.GetRoleName(ctx)) <= 0 {
+		p.Logger.Error(fmt.Errorf("user role err"))
+		p.Error(http.StatusBadRequest, fmt.Errorf("permission err"), "permission err")
+		return
+	}
+	rsp, err := svc.LoginVerify(ctx, req)
+	if err != nil {
+		rsp = &dto.LoginVerifyRsp{
+			BaseRsp: dto.BaseRsp{Code: -1, Msg: err.Error()},
+		}
+		p.OK(rsp, "success")
+		return
+	}
+	p.OK(rsp, "success")
+}
+
+func (p Practice) Register(ctx *gin.Context) {
+	svc := service.Practice{}
+	req := &dto.RegisterReq{}
+	if err := p.MakeContext(ctx).MakeOrm().Bind(req).MakeService(&svc.Service).Errors; err != nil {
+		p.Logger.Error(err)
+		p.Error(http.StatusInternalServerError, err, err.Error())
+		return
+	}
+	rsp, err := svc.Register(ctx, req)
+	if err != nil {
+		rsp = &dto.RegisterRsp{
+			BaseRsp: dto.BaseRsp{Code: -1, Msg: err.Error()},
+		}
+		p.OK(rsp, "success")
+		return
+	}
+	p.OK(rsp, "success")
+}
