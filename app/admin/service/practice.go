@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -254,21 +253,27 @@ func (p *Practice) LoginVerify(ctx context.Context, req *dto.LoginVerifyReq) (rs
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot find user")
 	}
-	h := md5.New()
-	re := h.Sum([]byte(req.Psw))
-	if newUser.UserID == req.UserID && newUser.Username == req.Username && newUser.Psw == string(re) {
+	fmt.Println("\n\n\n\nreq: ", req, "\n\n\n\n")
+	row := p.Orm.Raw("select md5(\"" + req.Psw + "\")").Row()
+	re := "a"
+	row.Scan(&re)
+	fmt.Println("\n\n\n\nmd5: ", re, "\n\n\n\n")
+	if newUser.UserID == req.UserID && newUser.Username == req.Username && newUser.Psw == re {
 		fmt.Println("登陆成功")
+	} else {
+		return nil, errors.Wrap(err, "password error")
 	}
 	return rsp, err
 }
 
 func (p *Practice) Register(ctx context.Context, req *dto.RegisterReq) (rsp *dto.RegisterRsp, err error) {
-	h := md5.New()
-	re := h.Sum([]byte(req.Psw))
+	row := p.Orm.Raw("select md5(\"" + req.Psw + "\")").Row()
+	re := "a"
+	row.Scan(&re)
 	nu := &dto.Users{
 		UserID:   req.UserID,
 		Username: req.Username,
-		Psw:      string(re),
+		Psw:      re,
 	}
 	err = p.Orm.Table("new_users").Create(&nu).Error
 	if err != nil {

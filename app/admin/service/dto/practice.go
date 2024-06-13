@@ -112,7 +112,7 @@ type GetTestRsp struct {
 
 type LoginVerifyReq struct {
 	UserID   int64  `json:"user_id"`
-	Username string `form:"user_name" json:"user_name"`
+	Username string `form:"username" json:"username"`
 	Psw      string `json:"psw"`
 }
 
@@ -122,7 +122,7 @@ type LoginVerifyRsp struct {
 
 type RegisterReq struct {
 	UserID   int64  `json:"user_id"`
-	Username string `form:"user_name" json:"user_name"`
+	Username string `form:"username" json:"username"`
 	Psw      string `json:"psw"`
 }
 
